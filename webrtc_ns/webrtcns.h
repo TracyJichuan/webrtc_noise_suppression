@@ -10,12 +10,22 @@
 
 #endif /* webrtcns_h */
 
+#include <stdio.h>
+
+typedef struct webrtcns_QMF {
+    int32_t analysis_state1[6];
+    int32_t analysis_state2[6];
+    int32_t synthesis_state1[6];
+    int32_t synthesis_state2[6];
+} webrtcns_QMF;
+
 typedef struct webrtcns_context {
-    void *ns_handle;
-    unsigned int sample_rate;
-    unsigned int bit_depth;
-    unsigned int mode;
-    unsigned int float_ns;
+    void            *ns_handle;
+    webrtcns_QMF    qmf;
+    unsigned int    sample_rate;
+    unsigned int    bit_depth;
+    unsigned int    mode;
+    unsigned int    float_ns;
 } webrtcns_context;
 
 int webrtcns_init(webrtcns_context **context, int sample_rate, int bit_depth, int mode, int float_ns);

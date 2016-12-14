@@ -82,9 +82,9 @@ void DeriveBufferSize (AudioQueueRef                audioQueue,
 
 void SetupAudioStreamBasicDescription (AudioStreamBasicDescription *asbd) {
     asbd->mFormatID = kAudioFormatLinearPCM;
-    asbd->mSampleRate = 16000.f;
+    asbd->mSampleRate = 16000;
     asbd->mChannelsPerFrame = 1;
-    asbd->mBitsPerChannel = sizeof(short) * 8;
+    asbd->mBitsPerChannel = 16;
     asbd->mBytesPerPacket = asbd->mBytesPerFrame = sizeof(SInt16);
     asbd->mFramesPerPacket = 1;
     asbd->mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked;
@@ -109,10 +109,10 @@ void SetupAudioStreamBasicDescription (AudioStreamBasicDescription *asbd) {
 }
 
 #pragma mark - Public API
-- (BOOL)startRecording:(NSString *)filePath {
-    
-    webrtcns_init(&nsContext, 16000, 16, 2, 1);
-    
+- (BOOL)startRecording:(NSString *)filePath
+{
+    webrtcns_init(&nsContext, 16000, 16, 1, 0);
+
     self.bufferData = [NSMutableData data];
 
     recorderState.mIsRunning = true;
@@ -187,7 +187,9 @@ void SetupAudioStreamBasicDescription (AudioStreamBasicDescription *asbd) {
             recorderState.mAudioFile = NULL;
         }
         
-        webrtcns_destory(nsContext);
+        dispatch_sync(self.processQueue, ^{
+            webrtcns_destory(nsContext);
+        });
     }
 }
 

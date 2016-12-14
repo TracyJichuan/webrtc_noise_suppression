@@ -46,6 +46,7 @@
 		49511EB21DFE596100B409B3 /* splitting_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = 49511E8E1DFE596100B409B3 /* splitting_filter.c */; };
 		49511EB31DFE596100B409B3 /* vector_scaling_operations.c in Sources */ = {isa = PBXBuildFile; fileRef = 49511E901DFE596100B409B3 /* vector_scaling_operations.c */; };
 		49511EB41DFE596100B409B3 /* webrtcns.c in Sources */ = {isa = PBXBuildFile; fileRef = 49511E921DFE596100B409B3 /* webrtcns.c */; };
+		49511EB71DFF92A500B409B3 /* Recorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 49511EB61DFF92A500B409B3 /* Recorder.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -112,6 +113,8 @@
 		49511E911DFE596100B409B3 /* windows_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = windows_private.h; sourceTree = "<group>"; };
 		49511E921DFE596100B409B3 /* webrtcns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = webrtcns.c; sourceTree = "<group>"; };
 		49511E931DFE596100B409B3 /* webrtcns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = webrtcns.h; sourceTree = "<group>"; };
+		49511EB51DFF92A500B409B3 /* Recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Recorder.h; sourceTree = "<group>"; };
+		49511EB61DFF92A500B409B3 /* Recorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Recorder.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +152,8 @@
 				49511E461DFE563200B409B3 /* AppDelegate.m */,
 				49511E481DFE563200B409B3 /* ViewController.h */,
 				49511E491DFE563200B409B3 /* ViewController.m */,
+				49511EB51DFF92A500B409B3 /* Recorder.h */,
+				49511EB61DFF92A500B409B3 /* Recorder.m */,
 				49511E4B1DFE563200B409B3 /* Main.storyboard */,
 				49511E4E1DFE563200B409B3 /* Assets.xcassets */,
 				49511E501DFE563200B409B3 /* LaunchScreen.storyboard */,
@@ -266,6 +271,7 @@
 				TargetAttributes = {
 					49511E3E1DFE563200B409B3 = {
 						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = 36WT396TPZ;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -339,6 +345,7 @@
 				49511EA81DFE596100B409B3 /* resample.c in Sources */,
 				49511E9E1DFE596100B409B3 /* fft4g.c in Sources */,
 				49511EAC1DFE596100B409B3 /* resample_by_2_mips.c in Sources */,
+				49511EB71DFF92A500B409B3 /* Recorder.m in Sources */,
 				49511E991DFE596100B409B3 /* digital_agc.c in Sources */,
 				49511E981DFE596100B409B3 /* cross_correlation.c in Sources */,
 				49511EAF1DFE596100B409B3 /* spl_init.c in Sources */,
@@ -461,7 +468,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 36WT396TPZ;
 				INFOPLIST_FILE = example/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jichuan.example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -472,7 +481,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 36WT396TPZ;
 				INFOPLIST_FILE = example/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jichuan.example;
 				PRODUCT_NAME = "$(TARGET_NAME)";

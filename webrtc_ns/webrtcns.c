@@ -13,26 +13,14 @@
 #include "noise_suppression_x.h"
 #include "signal_processing_library.h"
 
-int webrtcns_init(webrtcns_context **context, int sample_rate, int mode, int float_ns)
+int webrtcns_init(webrtcns_context **context, int sample_rate, int bit_depth, int mode, int float_ns)
 {
-    if (context == NULL) {
-        return -1;
-    }
-    if (sample_rate != (8000) || sample_rate != (16000) || sample_rate != (32000)) {
-        return -1;
-    }
-    if (mode != (0) || mode != (1) || mode != (2)) {
-        return -1;
-    }
-    if (float_ns != (0) || float_ns != (1)) {
-        return -1;
-    }
-    
     *context = malloc(sizeof(webrtcns_context));
     
     if (*context != NULL) {
         
         (*context)->sample_rate = sample_rate;
+        (*context)->bit_depth = bit_depth;
         (*context)->mode = mode;
         (*context)->float_ns = float_ns;
         
@@ -94,7 +82,7 @@ int webrtcns_destory(webrtcns_context *context)
 
 int webrtcns_process_frame_8k_16k(webrtcns_context *context, short *in_frame, short *out_frame)
 {
-    if (context && in_frame && out_frame && (context->sample_rate == (8000) || context->sample_rate == (16000))) {
+    if (context && in_frame && out_frame && (context->sample_rate == 8000 || context->sample_rate == 16000)) {
         
         if (context->float_ns) {
             return WebRtcNs_Process(context->ns_handle, in_frame, NULL, out_frame, NULL);
@@ -111,7 +99,7 @@ int webrtcns_process_frame_8k_16k(webrtcns_context *context, short *in_frame, sh
 
 int webrtcns_process_frame_32k(webrtcns_context *context, short *in_frame, short *out_frame)
 {
-    if (context && in_frame && out_frame && context->sample_rate == (32000)) {
+    if (context && in_frame && out_frame && context->sample_rate == 32000) {
         
         short in_low_band[160] = {0};
         short in_high_band[160] = {0};
@@ -142,46 +130,56 @@ int webrtcns_process_frame_32k(webrtcns_context *context, short *in_frame, short
 
 int webrtcns_process_frame(webrtcns_context *context, short *in_frame, short *out_frame)
 {
-    if (context->sample_rate == (8000) || context->sample_rate == (16000)) {
+    if (context->sample_rate == 8000 || context->sample_rate == 16000) {
         return webrtcns_process_frame_8k_16k(context, in_frame, out_frame);
-    } else if (context->sample_rate == (16000)) {
+    } else if (context->sample_rate == 32000) {
         return webrtcns_process_frame_32k(context, in_frame, out_frame);
     } else {
         return -1;
     }
 }
 
-int webrtcns_process_buffer(webrtcns_context *context, unsigned int bytes, short *in_buffer, short **out_buffer, short **remain_buffer)
+int webrtcns_process_buffer(webrtcns_context *context, unsigned int in_bytes, const void *in_buffer, void **out_buffer, unsigned int *out_bytes, void **remain_buffer, unsigned int *remain_bytes)
 {
-    unsigned int samples_10ms = context->sample_rate * 0.001;
-    unsigned int bytes_10ms = samples_10ms * sizeof(short);
+    unsigned int samples_10ms = context->sample_rate * 0.01;
+    unsigned int bytes_10ms = samples_10ms * (context->bit_depth/8);
+    unsigned target_bytes = (in_bytes / bytes_10ms) * bytes_10ms;
     
-    *out_buffer = malloc((bytes/bytes_10ms)*bytes_10ms);
+    *out_buffer = malloc(target_bytes);
+    memset(*out_buffer, 0, target_bytes);
     
-    for (int i = 0; i < bytes; i += bytes_10ms) {
+    for (int i = 0; i < in_bytes; i += bytes_10ms) {
         
-        if (bytes - i >= bytes_10ms) {
+        if (in_bytes - i >= bytes_10ms) {
             
-            short in_frame[bytes_10ms];
-            memset(in_frame, 0, sizeof(in_frame));
+            short *in_frame = malloc(bytes_10ms);
+            memset(in_frame, 0, bytes_10ms);
+            short *out_frame = malloc(bytes_10ms);
+            memset(out_frame, 0, bytes_10ms);
             
-            short out_frame[bytes_10ms];
-            memset(out_frame, 0, sizeof(out_frame));
-            
-            memcpy(in_frame, in_buffer+i, bytes_10ms);
+            memcpy(in_frame, in_buffer + i, bytes_10ms);
             
             if (webrtcns_process_frame(context, in_frame, out_frame) == 0) {
-                memcpy(out_buffer+i, out_frame, bytes_10ms);
+                memcpy(*out_buffer + i, out_frame, bytes_10ms);
+                
+                free(in_frame);
+                free(out_frame);
             } else {
                 free(*out_buffer);
-                out_buffer = NULL;
+                *out_buffer = NULL;
+                
+                free(in_frame);
+                free(out_frame);
                 return -1;
             }
         } else {
+            *remain_bytes = in_bytes - i;
+            *out_bytes = in_bytes - *remain_bytes;
             
-            int remain_bytes = bytes - i;
-            *remain_buffer = malloc(remain_bytes);
-            memcpy(*remain_buffer, in_buffer+i, remain_bytes);
+            *remain_buffer = malloc(*remain_bytes);
+            memset(*remain_buffer, 0, *remain_bytes);
+
+            memcpy(*remain_buffer, in_buffer+i, *remain_bytes);
         }
     }
     

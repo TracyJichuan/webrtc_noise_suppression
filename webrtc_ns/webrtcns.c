@@ -1,8 +1,8 @@
 //
-//  webrtcns.c
+//  webrtcns.h
 //
-//  Created by Jc on 16/12/12.
-//  Copyright © 2016年 jichuan. All rights reserved.
+//  Created by Jichuan on 16/12/12.
+//  Copyright © 2016 Jichuan. All rights reserved.
 //
 
 #include "webrtcns.h"
@@ -79,6 +79,11 @@ int webrtcns_init(webrtcns_context **context, int sample_rate, int bit_depth, in
 int webrtcns_destory(webrtcns_context *context)
 {
     if (context != NULL) {
+        if (context->float_ns) {
+            WebRtcNs_Free(context->ns_handle);
+        } else {
+            WebRtcNsx_Free(context->ns_handle);
+        }
         free(context);
         context = NULL;
     }
